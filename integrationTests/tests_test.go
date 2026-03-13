@@ -155,6 +155,29 @@ func TestCheckerMissingMandatoryStaticMetaDir(t *testing.T) {
 	require.Equal(t, expectedMissingDirs, rep.GetErrorLogs())
 }
 
+func TestCheckerCorruptedMandatoryAccountsDir(t *testing.T) {
+	cfg := &config.Config{
+		NodeDir:        "./data/corrupted-accounts-dir",
+		StartEpoch:     0,
+		EndEpoch:       nil,
+		CheckStatic:    true,
+		ParallelEpochs: 1,
+		Shard:          "Shard_0",
+	}
+	applyMandatoryDirs(cfg)
+
+	rep := NewTestReporter()
+
+	err := factory.DeepHistoryCheck(context.Background(), rep, cfg)
+	require.Nil(t, err)
+
+	// Expect an error log indicating the DB is corrupted
+	errorLogs := rep.GetErrorLogs()
+	require.Len(t, errorLogs, 1, "Expected exactly one error log")
+	assert.Contains(t, errorLogs[0], "data/corrupted-accounts-dir/1/Epoch_0/Shard_0/AccountsTrie")
+	assert.Contains(t, errorLogs[0], "corrupted") // Or whatever the missing file error looks like
+}
+
 func testTestCheckerOk(tb testing.TB, shard string, expectedSuccessLogs []string) {
 	cfg := &config.Config{
 		NodeDir:        "./data/ok",
