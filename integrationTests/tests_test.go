@@ -67,6 +67,94 @@ func TestCheckerMissingEpoch(t *testing.T) {
 	assert.Contains(t, err.Error(), "epochs are not consecutive: 0, 2")
 }
 
+func TestCheckerMissingMandatoryMiniblocksDir(t *testing.T) {
+	cfg := &config.Config{
+		NodeDir:        "./data/missing-miniblocks-dir",
+		StartEpoch:     0,
+		EndEpoch:       nil,
+		CheckStatic:    true,
+		ParallelEpochs: 1,
+		Shard:          "Shard_0",
+	}
+	applyMandatoryDirs(cfg)
+
+	rep := NewTestReporter()
+
+	err := factory.DeepHistoryCheck(context.Background(), rep, cfg)
+	require.Nil(t, err)
+
+	expectedMissingDirs := []string{
+		"data/missing-mandatory-epoch-dir/1/Epoch_1/Shard_0/MiniBlocks",
+	}
+	require.Equal(t, expectedMissingDirs, rep.GetErrorLogs())
+}
+
+func TestCheckerMissingMandatoryAccountsDBSubDir(t *testing.T) {
+	cfg := &config.Config{
+		NodeDir:        "./data/missing-accounts-subdir",
+		StartEpoch:     0,
+		EndEpoch:       nil,
+		CheckStatic:    true,
+		ParallelEpochs: 1,
+		Shard:          "Shard_0",
+	}
+	applyMandatoryDirs(cfg)
+
+	rep := NewTestReporter()
+
+	err := factory.DeepHistoryCheck(context.Background(), rep, cfg)
+	require.Nil(t, err)
+
+	expectedMissingDirs := []string{
+		"data/missing-accounts-subdir/1/Epoch_1/Shard_0/AccountsTrie/1",
+	}
+	require.Equal(t, expectedMissingDirs, rep.GetErrorLogs())
+}
+
+func TestCheckerMissingMandatoryStaticShardDir(t *testing.T) {
+	cfg := &config.Config{
+		NodeDir:        "./data/missing-static-shard-dir",
+		StartEpoch:     0,
+		EndEpoch:       nil,
+		CheckStatic:    true,
+		ParallelEpochs: 1,
+		Shard:          "Shard_0",
+	}
+	applyMandatoryDirs(cfg)
+
+	rep := NewTestReporter()
+
+	err := factory.DeepHistoryCheck(context.Background(), rep, cfg)
+	require.Nil(t, err)
+
+	expectedMissingDirs := []string{
+		"data/missing-static-shard-dir/1/Static/Shard_0/ShardHdrHashNonce0",
+	}
+	require.Equal(t, expectedMissingDirs, rep.GetErrorLogs())
+}
+
+func TestCheckerMissingMandatoryStaticMetaDir(t *testing.T) {
+	cfg := &config.Config{
+		NodeDir:        "./data/missing-static-meta-dir",
+		StartEpoch:     0,
+		EndEpoch:       nil,
+		CheckStatic:    true,
+		ParallelEpochs: 1,
+		Shard:          "Shard_metachain",
+	}
+	applyMandatoryDirs(cfg)
+
+	rep := NewTestReporter()
+
+	err := factory.DeepHistoryCheck(context.Background(), rep, cfg)
+	require.Nil(t, err)
+
+	expectedMissingDirs := []string{
+		"data/missing-static-meta-dir/1/Static/Shard_metachain/ShardHdrHashNonce1",
+	}
+	require.Equal(t, expectedMissingDirs, rep.GetErrorLogs())
+}
+
 func testTestCheckerOk(tb testing.TB, shard string, expectedSuccessLogs []string) {
 	cfg := &config.Config{
 		NodeDir:        "./data/ok",
