@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 
 	"github.com/iulianpascalau/mx-deep-history-checker/factory"
@@ -13,9 +14,18 @@ import (
 	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
+// appVersion should be populated at build time using ldflags
+// Usage examples:
+// Linux/macOS:
+//
+//	go build -v -ldflags="-X main.appVersion=$(git describe --all | cut -c7-32)
+var appVersion = "undefined"
 var log = logger.GetOrCreate("checker")
 
 func main() {
+	appVersion = fmt.Sprintf("%s/%s/%s-%s", appVersion, runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	log.Info("Starting deep history checker", "version", appVersion, "pid", os.Getpid())
+
 	err := run()
 	if err != nil {
 		log.LogIfError(err)
