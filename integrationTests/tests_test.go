@@ -84,7 +84,7 @@ func TestCheckerMissingMandatoryMiniblocksDir(t *testing.T) {
 	require.Nil(t, err)
 
 	expectedMissingDirs := []string{
-		"data/missing-mandatory-epoch-dir/1/Epoch_1/Shard_0/MiniBlocks",
+		"data/missing-miniblocks-dir/1/Epoch_1/Shard_0/MiniBlocks",
 	}
 	require.Equal(t, expectedMissingDirs, rep.GetErrorLogs())
 }
