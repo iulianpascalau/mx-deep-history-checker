@@ -3,12 +3,14 @@ package reporter
 import (
 	"fmt"
 	"os"
-	"sync"
 	"sync/atomic"
+
+	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
+var log = logger.GetOrCreate("reporter")
+
 type cliReporter struct {
-	mu           sync.Mutex
 	successCount uint32
 	errorCount   uint32
 	totalCount   uint32
@@ -23,46 +25,37 @@ func NewReporter() *cliReporter {
 }
 
 func (r *cliReporter) LogProgress(message string) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	fmt.Printf("[PROGRESS] %s\n", message)
+	log.Debug(fmt.Sprintf("[PROGRESS] %s", message))
 }
 
 func (r *cliReporter) LogSuccess(dbPath string) {
 	atomic.AddUint32(&r.successCount, 1)
 	atomic.AddUint32(&r.totalCount, 1)
 
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	fmt.Printf("[OK] %s\n", dbPath)
+	log.Info(fmt.Sprintf("[OK] %s", dbPath))
 }
 
 func (r *cliReporter) LogError(dbPath string, err error) {
 	atomic.AddUint32(&r.errorCount, 1)
 	atomic.AddUint32(&r.totalCount, 1)
 
-	r.mu.Lock()
-	fmt.Printf("[ERROR] %s: %v\n", dbPath, err)
-	r.mu.Unlock()
+	log.Error(fmt.Sprintf("[ERROR] %s: %v", dbPath, err))
 
 	os.Exit(1)
 }
 
 func (r *cliReporter) PrintSummary() {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	fmt.Println("\n--- Verification Summary ---")
-	fmt.Printf("Total Databases Checked: %d\n", r.totalCount)
-	fmt.Printf("Successful Checks: %d\n", r.successCount)
-	fmt.Printf("Failed Checks: %d\n", r.errorCount)
+	log.Info("--- Verification Summary ---")
+	log.Info(fmt.Sprintf("Total Databases Checked: %d", r.totalCount))
+	log.Info(fmt.Sprintf("Successful Checks: %d", r.successCount))
+	log.Info(fmt.Sprintf("Failed Checks: %d", r.errorCount))
 
 	if len(r.errorPaths) > 0 {
-		fmt.Println("\nCorrupted Databases:")
+		log.Error("Corrupted Databases:")
 		for _, path := range r.errorPaths {
-			fmt.Printf("  - %s\n", path)
+			log.Error(fmt.Sprintf("  - %s", path))
 		}
 	} else {
-		fmt.Println("\nAll databases are healthy!")
+		log.Info("All databases are healthy!")
 	}
 }
