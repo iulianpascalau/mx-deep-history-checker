@@ -2,6 +2,7 @@ package integrationTests
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	"github.com/iulianpascalau/mx-deep-history-checker/factory"
@@ -53,7 +54,7 @@ func TestCheckerMissingEpoch(t *testing.T) {
 	cfg := &config.Config{
 		NodeDir:        "./data/missing-epoch",
 		StartEpoch:     0,
-		EndEpoch:       nil,
+		EndEpoch:       math.MaxUint64,
 		CheckStatic:    true,
 		ParallelEpochs: 1,
 		Shard:          "Shard_0",
@@ -71,7 +72,7 @@ func TestCheckerMissingMandatoryMiniblocksDir(t *testing.T) {
 	cfg := &config.Config{
 		NodeDir:        "./data/missing-miniblocks-dir",
 		StartEpoch:     0,
-		EndEpoch:       nil,
+		EndEpoch:       math.MaxUint64,
 		CheckStatic:    true,
 		ParallelEpochs: 1,
 		Shard:          "Shard_0",
@@ -93,7 +94,7 @@ func TestCheckerMissingMandatoryAccountsDBSubDir(t *testing.T) {
 	cfg := &config.Config{
 		NodeDir:        "./data/missing-accounts-subdir",
 		StartEpoch:     0,
-		EndEpoch:       nil,
+		EndEpoch:       math.MaxUint64,
 		CheckStatic:    true,
 		ParallelEpochs: 1,
 		Shard:          "Shard_0",
@@ -115,7 +116,7 @@ func TestCheckerMissingMandatoryStaticShardDir(t *testing.T) {
 	cfg := &config.Config{
 		NodeDir:        "./data/missing-static-shard-dir",
 		StartEpoch:     0,
-		EndEpoch:       nil,
+		EndEpoch:       math.MaxUint64,
 		CheckStatic:    true,
 		ParallelEpochs: 1,
 		Shard:          "Shard_0",
@@ -137,7 +138,7 @@ func TestCheckerMissingMandatoryStaticMetaDir(t *testing.T) {
 	cfg := &config.Config{
 		NodeDir:        "./data/missing-static-meta-dir",
 		StartEpoch:     0,
-		EndEpoch:       nil,
+		EndEpoch:       math.MaxUint64,
 		CheckStatic:    true,
 		ParallelEpochs: 1,
 		Shard:          "Shard_metachain",
@@ -159,7 +160,7 @@ func TestCheckerCorruptedMandatoryAccountsDir(t *testing.T) {
 	cfg := &config.Config{
 		NodeDir:        "./data/corrupted-accounts-dir",
 		StartEpoch:     0,
-		EndEpoch:       nil,
+		EndEpoch:       math.MaxUint64,
 		CheckStatic:    true,
 		ParallelEpochs: 1,
 		Shard:          "Shard_0",
@@ -182,7 +183,7 @@ func testTestCheckerOk(tb testing.TB, shard string, expectedSuccessLogs []string
 	cfg := &config.Config{
 		NodeDir:        "./data/ok",
 		StartEpoch:     0,
-		EndEpoch:       nil,
+		EndEpoch:       math.MaxUint64,
 		CheckStatic:    true,
 		ParallelEpochs: 1,
 		Shard:          shard,
