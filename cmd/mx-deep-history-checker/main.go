@@ -142,7 +142,6 @@ func run(ctx *cli.Context) error {
 func getMandatoryEpochDirs() []string {
 	return []string{
 		"AccountsTrie",
-		"AccountsTrieCheckpoints",
 		"BlockHeaders",
 		"BootstrapData",
 		"DbLookupExtensions/MiniblocksMetadata",
@@ -151,7 +150,6 @@ func getMandatoryEpochDirs() []string {
 		"MetaBlock",
 		"MiniBlocks",
 		"PeerAccountsTrie",
-		"PeerAccountsTrieCheckpoints",
 		"Receipts",
 		"RewardTransactions",
 		"ScheduledSCRs",
