@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -26,7 +27,7 @@ func (t *fileSystemTraverser) FindEpochs(cfg *config.Config) ([]string, error) {
 	}
 
 	var validEpochs []string
-	epochsNum := make([]uint32, 0, len(entries))
+	epochsNum := make([]uint64, 0, len(entries))
 
 	for _, entry := range entries {
 		if !entry.IsDir() {
@@ -46,16 +47,14 @@ func (t *fileSystemTraverser) FindEpochs(cfg *config.Config) ([]string, error) {
 			continue
 		}
 
-		epoch := uint32(epochNum)
-		epochsNum = append(epochsNum, epoch)
+		epochsNum = append(epochsNum, epochNum)
 
-		if epoch >= cfg.StartEpoch {
-			if cfg.EndEpoch == nil || epoch <= *cfg.EndEpoch {
-				validEpochs = append(validEpochs, filepath.Join(basePath, name))
-			}
+		if epochNum >= cfg.StartEpoch && epochNum <= cfg.EndEpoch {
+			validEpochs = append(validEpochs, filepath.Join(basePath, name))
 		}
 	}
 
+	sort.SliceStable(epochsNum, func(i, j int) bool { return epochsNum[i] < epochsNum[j] })
 	for i := 1; i < len(epochsNum); i++ {
 		if epochsNum[i] != epochsNum[i-1]+1 {
 			return nil, fmt.Errorf("epochs are not consecutive: %d, %d", epochsNum[i-1], epochsNum[i])
