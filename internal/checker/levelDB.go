@@ -32,12 +32,8 @@ func CheckLevelDB(path string) error {
 	defer iter.Release()
 
 	// Seek to the absolute boundaries to trigger deeper checksum verification.
-	if iter.First() {
-		// Found first key
-	}
-	if iter.Last() {
-		// Found last key
-	}
+	_ = iter.First()
+	_ = iter.Last()
 
 	// Verify if any corrupted blocks were detected during the seeks/iteration.
 	err = iter.Error()
