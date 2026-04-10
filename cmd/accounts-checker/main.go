@@ -15,7 +15,7 @@ const (
 	token        = "<token>"
 	increment    = 5000
 	startNonce   = 1
-	reportWindow = 100000 // Report after processing a block of 100k nonces
+	reportWindow = 50000 // Report after processing a block of a size of reportWindow
 )
 
 var addresses = []string{
